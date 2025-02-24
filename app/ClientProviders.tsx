@@ -1,4 +1,3 @@
-// app/ClientProviders.tsx
 "use client";
 import * as React from "react";
 import { trpc } from "@/src/utils/trpc";
