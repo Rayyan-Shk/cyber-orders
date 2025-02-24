@@ -1,4 +1,3 @@
-// src/server/trpc/router/_app.ts
 import { createTRPCRouter } from "../trpc";
 import { orderRouter } from "./order";
 
