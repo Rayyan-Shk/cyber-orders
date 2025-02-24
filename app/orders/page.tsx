@@ -53,6 +53,10 @@ export default function OrdersPage() {
                       <div className="text-gray-400 text-sm">Delivered</div>
                       <div className="text-emerald-400 text-2xl font-bold mt-1">{stats?.deliveredOrders}</div>
                     </div>
+                    <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
+                      <div className="text-gray-400 text-sm">Processing</div>
+                      <div className="text-blue-700 text-2xl font-bold mt-1">{stats?.processingOrders}</div>
+                    </div>
                   </>
                 )}
               </div>

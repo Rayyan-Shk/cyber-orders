@@ -73,11 +73,18 @@ export const orderRouter = createTRPCRouter({
         const deliveredOrders = await ctx.prisma.order.count({
           where: { fulfillmentStatus: "Delivered" },
         });
+
+        const processingOrders = await ctx.prisma.order.count ({
+            where: {
+                fulfillmentStatus: "Processing"
+            }
+        })
     
         return {
           totalOrders,
           pendingOrders,
           deliveredOrders,
+          processingOrders
         };
     })
 });
