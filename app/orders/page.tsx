@@ -1,22 +1,16 @@
 "use client";
 import { trpc } from "@/src/utils/trpc";
 import OrdersTable from "./ordersTable";
-import { RefreshCw } from "lucide-react"; 
+import Loader from "@/components/Loader";
+import Navbar from "@/components/Navbar";
+import Stats from "@/components/Stats";
 
 export default function OrdersPage() {
   const { data: stats, isLoading, error } = trpc.order.getOrderStats.useQuery();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black to-gray-900">
-      <nav className="border-b border-gray-800 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center h-16">
-            <div className="flex items-center">
-              <span className="text-cyan-500 text-xl font-bold">CyberOrders</span>
-            </div>
-          </div>
-        </div>
-      </nav>
+        <Navbar/>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
@@ -28,35 +22,12 @@ export default function OrdersPage() {
 
               <div className="mt-8 space-y-4">
                 {isLoading ? (
-                  
-                  <div className="flex justify-center items-center h-64 bg-black rounded-xl">
-                    <div className="flex flex-col items-center space-y-4">
-                      <RefreshCw className="animate-spin h-8 w-8 text-cyan-500" />
-                      <p className="text-gray-400 font-medium">Loading orders...</p>
-                    </div>
-                  </div>
+                    <Loader/>
                 ) : error ? (
                   <p className="text-red-400">Error loading stats</p>
                 ) : (
                   <>
-                    <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
-                      <div className="text-gray-400 text-sm">Total Orders</div>
-                      <div className="text-cyan-400 text-2xl font-bold mt-1">{stats?.totalOrders}</div>
-                    </div>
-
-                    <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
-                      <div className="text-gray-400 text-sm">Pending</div>
-                      <div className="text-amber-400 text-2xl font-bold mt-1">{stats?.pendingOrders}</div>
-                    </div>
-
-                    <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
-                      <div className="text-gray-400 text-sm">Delivered</div>
-                      <div className="text-emerald-400 text-2xl font-bold mt-1">{stats?.deliveredOrders}</div>
-                    </div>
-                    <div className="bg-gray-900 p-4 rounded-xl border border-gray-800">
-                      <div className="text-gray-400 text-sm">Processing</div>
-                      <div className="text-blue-700 text-2xl font-bold mt-1">{stats?.processingOrders}</div>
-                    </div>
+                  <Stats/>
                   </>
                 )}
               </div>
