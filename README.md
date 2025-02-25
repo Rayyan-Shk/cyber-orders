@@ -42,7 +42,7 @@ A modern order management system built with Next.js, tRPC, Prisma, PostgreSQL, a
 
 ### Installation & Setup
 
-#### Option 1: Using Docker (Recommended)
+#### Option 1: Using Docker
 
 Start all services (Next.js app, PostgreSQL, and Redis) with a single command:
 
