@@ -7,6 +7,7 @@ import Loader from "@/components/Loader";
 import TableMain from "@/components/TableMain";
 import Navigation from "@/components/Navigation";
 import SearchFilter from "@/components/SearchFilter";
+import TableHeader from "@/components/TableHeader";
 
 export default function OrdersTable() {
   const [search, setSearch] = useState("");
@@ -31,33 +32,25 @@ export default function OrdersTable() {
   });
   
   useEffect(() => {
-    if (inputFocused && searchInputRef.current) { 
-      searchInputRef.current.focus();
-      
-      const length = searchInputRef.current.value.length;
-      searchInputRef.current.setSelectionRange(length, length);
+    if (inputFocused && searchInputRef.current) {
+      setTimeout(() => {
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+          const length = searchInputRef.current.value.length;
+          searchInputRef.current.setSelectionRange(length, length);
+        }
+      }, 0);
     }
   }, [data, inputFocused]);
 
   const totalPages = data ? Math.ceil(data.total / limit) : 1;
 
-  if (isLoading) {
-    return (
-      <>
-      <Loader/>
-      </>
-    );
-  }
-
   return (
     <div className="bg-black border border-gray-800 shadow-xl rounded-xl overflow-hidden">
-      <div className="bg-gradient-to-r from-gray-900 to-black p-6 border-b border-gray-800">
-        <h2 className="text-gray-100 text-2xl font-bold">Orders <span className="text-cyan-400">Table</span></h2>
-        <p className="text-gray-500 mt-1">Manage and track all customer orders</p>
-      </div>
-      
+      <TableHeader />
+
       <div className="flex flex-col sm:flex-row justify-between items-center p-6 bg-gray-900 border-b border-gray-800">
-      <SearchFilter
+        <SearchFilter
           ref={searchInputRef}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -72,10 +65,17 @@ export default function OrdersTable() {
           Refresh
         </Button>
       </div>
-      
-      <TableMain data={data}/>
-      
-      <Navigation page={page} setPage={setPage} totalPages={totalPages} />
+
+      {isLoading ? (
+        <div className="flex justify-center items-center p-12">
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <TableMain key={`table-${page}-${debouncedSearch}`} data={data} />
+          <Navigation page={page} setPage={setPage} totalPages={totalPages} />
+        </>
+      )}
     </div>
   );
 }
