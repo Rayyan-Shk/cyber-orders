@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Order Management System
+
+![Order Dashboard Screenshot](/public/cyberorder.png)
+
+A modern order management system built with Next.js, tRPC, Prisma, PostgreSQL, and Redis. This application allows users to view, filter, and create fulfillment orders with robust caching and performance optimizations.
+
+## Features
+
+- **Modern Frontend**: Built with Next.js App Router, Tailwind CSS, and shadcn UI components
+- **Type-Safe API**: End-to-end type safety with tRPC and Zod validation
+- **Database & ORM**: PostgreSQL database with Prisma ORM
+- **Performance Optimizations**:
+  - Redis caching for queries
+  - Debounced search inputs
+  - Pagination for order listings
+- **Containerization**: Docker and Docker Compose setup for easy deployment
+- **CI Pipeline**: Automated testing and building with GitHub Actions
 
 ## Getting Started
 
-First, run the development server:
+### Environment Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Rayyan-Shk/cyber-orders.git
+   cd cyver-orders
+   ```
+
+2. Copy the environment example file:
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Update the `.env` file with your database and Redis connection details:
+   ```
+   # Database
+   DATABASE_URL="postgresql://postgres:password@localhost:5432/orderdb"
+   
+   # Redis
+   REDIS_URL="redis://localhost:6379"
+   ```
+
+### Installation & Setup
+
+#### Option 1: Using Docker (Recommended)
+
+Start all services (Next.js app, PostgreSQL, and Redis) with a single command:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker compose up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will:
+- Build and start the Next.js application
+- Set up PostgreSQL and Redis containers
+- Run Prisma migrations automatically
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The application will be available at http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+#### Option 2: Manual Setup
 
-## Learn More
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Generate Prisma client:
+   ```bash
+   npx prisma generate
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Run database migrations:
+   ```bash
+   npx prisma migrate dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+5. Start the production server:
+   ```bash
+   npm start
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## API Routes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The application uses tRPC for type-safe API routes:
+
+- `getOrders`: Fetch orders with filtering and pagination
+- `createOrder`: Create new orders with validated input
+- `getOrderStats`: Get order statistics and counts by status
+
+## Project Structure
+
+```
+.
+├── Dockerfile
+├── docker-compose.yml
+├── package.json
+├── prisma
+│   └── schema.prisma
+├── .github
+│   └── workflows
+│       └── ci.yml
+├── src
+│   ├── server
+│   │   ├── db
+│   │   │   └── client.ts
+│   │   └── trpc
+│   │       ├── trpc.ts
+│   │       └── router
+│   │           ├── order.ts 
+│   │           └── _app.
+│   └── utils   └── router.ts 
+│       └── trpc.ts
+└── app
+    ├── layout.tsx
+    ├── ClientProviders.tsx
+    ├── orders
+    │   ├── page.tsx
+    │   └── OrdersTable.tsx
+    └── api
+        └── trpc
+            └── route.ts
+            
+```
