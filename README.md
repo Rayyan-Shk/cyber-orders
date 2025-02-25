@@ -2,7 +2,7 @@
 
 ![Order Dashboard Screenshot](/public/cyberorder.png)
 
-A modern order management system built with Next.js, tRPC, Prisma, PostgreSQL, and Redis. This application allows users to view, filter, and create fulfillment orders with robust caching and performance optimizations.
+A modern order management system built with Next.js, tRPC, Prisma, PostgreSQL, and Redis. This application allows users to view, filter fulfillment orders with  caching and performance optimizations..
 
 ## Features
 
@@ -124,5 +124,5 @@ The application uses tRPC for type-safe API routes:
     └── api
         └── trpc
             └── route.ts
-            
+
 ```
