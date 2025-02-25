@@ -20,7 +20,7 @@ export default function OrdersTable() {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
       setPage(1);
-    }, 300);
+    }, 400);
     return () => clearTimeout(timer);
   }, [search])
 
