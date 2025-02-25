@@ -1,5 +1,8 @@
-import { createTRPCRouter, publicProcedure } from "../trpc";
-import { z } from "zod";
+import { createTRPCRouter, publicProcedure } from "../trpc"
+import { z } from "zod"
+import Redis from "ioredis"
+
+const redis = new Redis()
 
 export const orderRouter = createTRPCRouter({
   getOrders: publicProcedure
@@ -12,6 +15,13 @@ export const orderRouter = createTRPCRouter({
     )
     .query(async ({ input, ctx }) => {
       const { search, page, limit } = input;
+      const cacheKey = `orders.${search || "all"}:page${page}:limit${limit}`
+
+      const cachedOrders = await redis.get(cacheKey)
+      if (cachedOrders){
+        return JSON.parse(cachedOrders)
+      }
+
       const skip = (page - 1) * limit;
       const where =
         search?.trim().length as any> 0
@@ -32,7 +42,12 @@ export const orderRouter = createTRPCRouter({
         orderBy: { createdAt: "desc" },
       });
       const total = await ctx.prisma.order.count({ where });
-      return { orders, total, page, limit };
+
+      const response =  { orders, total, page, limit };
+
+      await redis.set(cacheKey, JSON.stringify(response), "EX", 300)
+
+      return response
     }),
 
   createOrder: publicProcedure
@@ -51,7 +66,8 @@ export const orderRouter = createTRPCRouter({
     )
 
     .mutation(async ({ input, ctx }) => {
-      const { customerName, address, fulfillmentStatus, orderLineItems } = input;
+      const { customerName, address, fulfillmentStatus, orderLineItems } = input
+    
       const order = await ctx.prisma.order.create({
         data: {
           customerName,
@@ -62,11 +78,26 @@ export const orderRouter = createTRPCRouter({
           },
         },
       });
+
+      await redis.del("orderStats")
+
+      const keys = await redis.keys("orders:*")
+      if (keys.length > 0) {
+        await redis.del(...keys);
+      } 
+
       return order;
     }),
     
     getOrderStats: publicProcedure.query(async ({ ctx }) => {
-        const totalOrders = await ctx.prisma.order.count();
+        const cacheKey = "orderStats"
+
+        const cachedStats = await redis.get(cacheKey)
+        if (cachedStats){
+            return JSON.parse(cachedStats)
+        }
+        
+        const totalOrders = await ctx.prisma.order.count()
         const pendingOrders = await ctx.prisma.order.count({
           where: { fulfillmentStatus: "Pending" },
         });
@@ -80,11 +111,15 @@ export const orderRouter = createTRPCRouter({
             }
         })
     
-        return {
+        const stats =  {
           totalOrders,
           pendingOrders,
           deliveredOrders,
           processingOrders
         };
+
+        await redis.set(cacheKey, JSON.stringify(stats), "EX", 300)
+
+        return stats
     })
 });
