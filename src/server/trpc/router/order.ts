@@ -1,8 +1,8 @@
 import { createTRPCRouter, publicProcedure } from "../trpc"
-import { z } from "zod"
+import { z } from "zod";
 import Redis from "ioredis"
 
-const redis = new Redis()
+const redis = new Redis(process.env.REDIS_URL as any)
 
 export const orderRouter = createTRPCRouter({
   getOrders: publicProcedure
