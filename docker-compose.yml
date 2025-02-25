@@ -1,0 +1,46 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    container_name: 1my-postgres
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      POSTGRES_DB: myapp
+    ports:
+      - "5432:5432"  # Changed to standard PostgreSQL port
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  # Redis
+  redis:
+    container_name: 1my-redis
+    image: redis:alpine
+    restart: always
+    ports:
+      - "6379:6379"  # Changed to standard Redis port
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
+  # Next.js app (with tRPC and Prisma)
+  nextjs:
+    container_name: 1my-nextjs
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      DATABASE_URL: postgresql://prisma:prisma@postgres:5432/myapp
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+    ports:
+      - "3000:3000"  # Explicitly mapping host port 3000 to container port 3000
+
+volumes:
+  postgres-data:
+  redis-data:
