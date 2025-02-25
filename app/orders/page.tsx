@@ -38,10 +38,6 @@ export default function OrdersPage() {
             <OrdersTable />
           </div>
         </div>
-
-        <div className="mt-12 pt-8 border-t border-gray-800 text-gray-500 text-sm">
-          <p className="text-center">© 2025 Your Company. All rights reserved.</p>
-        </div>
       </main>
     </div>
   );
